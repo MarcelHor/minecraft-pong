@@ -39,6 +39,7 @@ function createBall() {
     const ballGeometry = new THREE.BoxGeometry(0.3, 0.3, 0.3);
     const ballMaterial = new THREE.MeshBasicMaterial({color: 0x00ff00});
     const ball = new THREE.Mesh(ballGeometry, ballMaterial);
+    ball.position.set(0, 0, 1);
     return ball;
 }
 
@@ -108,7 +109,8 @@ function createStonePlatform() {
 
 export function init() {
     camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.1, 1000);
-    camera.position.set(0, 0, 6);
+    camera.position.set(0, -3, 5);
+    camera.rotation.x = 0.5;
     scene = new THREE.Scene();
     renderer = new THREE.WebGLRenderer();
     renderer.setSize(window.innerWidth, window.innerHeight);
@@ -169,24 +171,51 @@ function onWindowResize() {
     renderer.setSize(window.innerWidth, window.innerHeight);
 }
 
+
+const paddleBounds = {
+    minX: -4,
+    maxX: 4,
+    minY: -1.5,
+    maxY: 1.5
+};
+
+const ballBounds = {
+    minX: -4,
+    maxX: 4,
+    minY: -1.8,
+    maxY: 1.8
+}
+
 export function animate() {
     requestAnimationFrame(animate);
 
-    // Ball movement
     ball.position.x += ballSpeedX;
     ball.position.y += ballSpeedY;
 
-    // Collision detection for top and bottom walls
-    if (ball.position.y > 2 || ball.position.y < -2) {
-        ballSpeedY = -ballSpeedY;
+    paddle1.position.x = Math.max(paddleBounds.minX, Math.min(paddle1.position.x, paddleBounds.maxX));
+    paddle1.position.y = Math.max(paddleBounds.minY, Math.min(paddle1.position.y, paddleBounds.maxY));
+
+    paddle2.position.x = Math.max(paddleBounds.minX, Math.min(paddle2.position.x, paddleBounds.maxX));
+    paddle2.position.y = Math.max(paddleBounds.minY, Math.min(paddle2.position.y, paddleBounds.maxY));
+
+    if (ball.position.x < ballBounds.minX || ball.position.x > ballBounds.maxX) {
+        ballSpeedX *= -1;
     }
 
-    // Collision detection for paddles
-    if (ball.position.x < paddle1.position.x + 0.15 && ball.position.x > paddle1.position.x - 0.15 && ball.position.y < paddle1.position.y + 0.5 && ball.position.y > paddle1.position.y - 0.5) {
-        ballSpeedX = -ballSpeedX;
+    if (ball.position.y < ballBounds.minY || ball.position.y > ballBounds.maxY) {
+        ballSpeedY *= -1;
     }
-    if (ball.position.x < paddle2.position.x + 0.15 && ball.position.x > paddle2.position.x - 0.15 && ball.position.y < paddle2.position.y + 0.5 && ball.position.y > paddle2.position.y - 0.5) {
-        ballSpeedX = -ballSpeedX;
+
+    // Kolize s pádkou 1
+    if (ball.position.x < paddle1.position.x + 0.2 && ball.position.x > paddle1.position.x - 0.2 &&
+        ball.position.y < paddle1.position.y + 0.5 && ball.position.y > paddle1.position.y - 0.5) {
+        ballSpeedX *= -1;
+    }
+
+    // Kolize s pádkou 2
+    if (ball.position.x < paddle2.position.x + 0.2 && ball.position.x > paddle2.position.x - 0.2 &&
+        ball.position.y < paddle2.position.y + 0.5 && ball.position.y > paddle2.position.y - 0.5) {
+        ballSpeedX *= -1;
     }
 
     renderer.render(scene, camera);
