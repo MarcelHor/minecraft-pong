@@ -1,0 +1,174 @@
+* {
+    font-family: 'Minecraftia', sans-serif;
+}
+
+body {
+    background-image: url('../assets/images/backgroundmenu.png');
+    background-size: cover;
+    overflow: hidden;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 100vh;
+}
+
+.container {
+    height: 80vh;
+    width: 100%;
+    display: flex;
+    flex-grow: 1;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.title-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 4rem;
+}
+
+.title {
+    font-size: 7rem;
+    color: rgb(247, 247, 247);
+    text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.8);
+    margin: 0;
+    padding: 0;
+    position: relative;
+}
+
+.subtitle {
+    font-size: 1.5rem;
+    color: rgb(247, 247, 247);
+    text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.8);
+    margin: 0;
+    padding: 0;
+}
+
+#splash {
+    font-size: 0.8rem;
+    color: yellow;
+    position: absolute;
+    transform: rotate(-10deg);
+    right: 0px;
+    bottom: 10px;
+    animation: splashAnim 1s infinite;
+}
+
+@keyframes splashAnim {
+    0%, 100% {
+        transform: rotate(-10deg) scale(1);
+    }
+    50% {
+        transform: rotate(-10deg) scale(1.2);
+    }
+}
+
+.menu {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 33.3%;
+    margin-top: 1rem;
+    margin-bottom: 1.25rem;
+}
+
+.menu-options {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 33.3%;
+}
+
+.menu-options .btn-minecraft:first-child {
+    margin-right: 10px;
+}
+
+.menu-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 1rem;
+    color: rgb(247, 247, 247);
+    text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.8);
+    margin: 0 1rem;
+}
+
+.btn-minecraft {
+    background: #727272;
+    color: rgb(247, 247, 247);
+    width: 100%;
+    padding: .5rem 0;
+    margin-bottom: .75rem;
+    text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.8);
+    font-size: 1rem;
+    letter-spacing: .025em;
+    border: 2px solid rgba(0, 0, 0, 1);
+    box-shadow: inset 3px 3px 0 rgba(255, 255, 255, 0.5),
+    inset -3px -3px 0 rgba(0, 0, 0, 0.5);
+    cursor: pointer;
+}
+
+.btn-minecraft:hover {
+    background: rgba(115, 107, 221, 1);
+}
+
+.btn-minecraft:focus {
+    color: rgb(246, 246, 44);
+    outline: none;
+}
+
+.mojang-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #ef323d;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    transition: opacity 1s ease-in-out;
+}
+
+.mojang-screen img {
+    width: 800px;
+}
+
+.loading-bar {
+    width: 50%;
+    position: relative;
+    background-color: transparent;
+    border: 2px solid white;
+    height: 20px;
+    padding: 2px;
+    margin-top: 20px;
+}
+
+.loading-progress {
+    height: 100%;
+    background-color: white;
+    width: 0%;
+    transition: width 3s ease-in-out;
+}
+
+.start-game-button {
+    height: 40px;
+    margin-top: 20px;
+    font-size: 20px;
+    border: 2px solid white;
+    background-color: transparent;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.5s ease-in-out;
+}
+
+
