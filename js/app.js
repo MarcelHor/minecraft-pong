@@ -2,9 +2,10 @@ const textureLoader = new THREE.TextureLoader();
 const grassTexture = textureLoader.load('../assets/textures/grass.jpg');
 const stoneTexture = textureLoader.load('../assets/textures/stone.png');
 const plankTexture = textureLoader.load('../assets/textures/plank.png');
+const iceTexture = textureLoader.load('../assets/textures/ice_block.png');
 
 const loader = new THREE.GLTFLoader();
-[grassTexture, stoneTexture, plankTexture].forEach(texture => {
+[grassTexture, stoneTexture, plankTexture, iceTexture].forEach(texture => {
     texture.magFilter = THREE.NearestFilter;
     texture.minFilter = THREE.NearestFilter;
     texture.wrapS = THREE.RepeatWrapping;
@@ -15,6 +16,7 @@ grassTexture.repeat.set(100, 100);
 const floorMaterial = new THREE.MeshBasicMaterial({map: grassTexture});
 const stoneMaterial = new THREE.MeshBasicMaterial({map: stoneTexture});
 const paddleMaterial = new THREE.MeshBasicMaterial({map: plankTexture});
+const iceMaterial = new THREE.MeshBasicMaterial({map: iceTexture});
 
 let camera, scene, renderer;
 let paddle1, paddle2, ball;
@@ -50,7 +52,6 @@ function createLight() {
 function createFloor() {
     const floorGeometry = new THREE.PlaneGeometry(100, 100);
     const floor = new THREE.Mesh(floorGeometry, floorMaterial);
-    floor.position.y = -0.5;
     return floor;
 }
 
@@ -80,25 +81,27 @@ function addFence(group, index, vertical = false) {
 
 
 function createStonePlatform() {
-    const blockSize = 1;
     const blocksWide = 10;
     const blocksDeep = 6;
     const blockHeight = 1;
-    const blockGeometry = new THREE.BoxGeometry(1, 1, 1);
     const platformGroup = new THREE.Group();
 
     for (let x = 0; x < blocksWide; x++) {
         for (let z = 0; z < blocksDeep; z++) {
-            const block = new THREE.Mesh(blockGeometry, stoneMaterial);
-            block.position.x = x * blockSize - blocksWide / 2 * blockSize + blockSize / 2;
-            block.position.y = blockHeight / 2;
-            block.position.z = z * blockSize - blocksDeep / 2 * blockSize + blockSize / 2;
+            let blockMaterial = (x === 0 || x === blocksWide - 1 || z === 0 || z === blocksDeep - 1) ? stoneMaterial : iceMaterial;
+
+            const blockGeometry = new THREE.BoxGeometry(1, blockHeight, 1);
+            const block = new THREE.Mesh(blockGeometry, blockMaterial);
+            block.position.x = x - blocksWide / 2 + 0.5;
+            block.position.y = 0;
+            block.position.z = z - blocksDeep / 2 + 0.5;
             platformGroup.add(block);
         }
     }
 
+    platformGroup.position.y = 0.5 - blockHeight / 2;
+    platformGroup.position.z = 0.5;
     platformGroup.rotation.x = Math.PI / 2;
-    platformGroup.position.z = 0;
     return platformGroup;
 }
 
