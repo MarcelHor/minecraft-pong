@@ -1,0 +1,11 @@
+Model Information:
+* title:	Minecraft fence
+* source:	https://sketchfab.com/3d-models/minecraft-fence-5874acc4002c4644ba8a2eab5933b123
+* author:	timmyyom36 (https://sketchfab.com/timmyyom36)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Minecraft fence" (https://sketchfab.com/3d-models/minecraft-fence-5874acc4002c4644ba8a2eab5933b123) by timmyyom36 (https://sketchfab.com/timmyyom36) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

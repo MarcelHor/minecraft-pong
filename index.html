@@ -5,39 +5,45 @@
     <link href="https://fonts.cdnfonts.com/css/minecraftia" rel="stylesheet">
 </head>
 <body>
+
 <audio id="backgroundMusic" src="/assets/sounds/menu-music.mp3" loop></audio>
 <audio id="buttonSound" src="/assets/sounds/minecraft_click.mp3"></audio>
-<div id="mojangScreen" class="mojang-screen">
-    <img src="./assets/images/Mojang-logo.png" alt="Mojang Logo"/>
-    <div class="loading-bar">
-        <div class="loading-progress"></div>
-    </div>
-    <button id="startButton" class="start-game-button" style="display:none;">Start Game</button>
-</div>
-<div class="container">
-    <div class="title-container">
-        <h1 class="title">Minecraft<span id="splash">Enjoy the game!</span></h1>
-        <h2 class="subtitle">Pong Edition</h2>
-    </div>
-    <div class="menu">
-        <button class="btn-minecraft">Singeplayer</button>
-        <button class="btn-minecraft">Local multiplayer</button>
-    </div>
-    <div class="menu-options">
-        <button class="btn-minecraft">Options</button>
-        <button class="btn-minecraft">Quit</button>
-    </div>
 
+<!--<div id="mojangScreen" class="mojang-screen">-->
+<!--    <img src="./assets/images/Mojang-logo.png" alt="Mojang Logo"/>-->
+<!--    <div class="loading-bar">-->
+<!--        <div class="loading-progress"></div>-->
+<!--    </div>-->
+<!--    <button id="startButton" class="start-game-button" style="display:none;">Start Game</button>-->
+<!--</div>-->
+
+<!--<div class="menu-container">-->
+<!--    <div class="menu-main">-->
+<!--        <div class="title-container">-->
+<!--            <h1 class="title">Minecraft<span id="splash">Enjoy the game!</span></h1>-->
+<!--            <h2 class="subtitle">Pong Edition</h2>-->
+<!--        </div>-->
+<!--        <div class="menu-buttons">-->
+<!--            <button class="btn-minecraft" id="play">Singeplayer</button>-->
+<!--            <button class="btn-minecraft">Local multiplayer</button>-->
+<!--        </div>-->
+<!--        <div class="menu-options">-->
+<!--            <button class="btn-minecraft">Options</button>-->
+<!--            <button class="btn-minecraft" id="quit">Quit</button>-->
+<!--        </div>-->
+<!--    </div>-->
+
+<!--    <div class="menu-footer">-->
+<!--        <p class="footer-text">Minecraft pong 1.0</p>-->
+<!--        <p class="footer-text">Copyright Marcel Horvath. Do-->
+<!--            not distribute!</p>-->
+<!--    </div>-->
 </div>
-<div class="menu-footer">
-    <p class="footer-text">Minecraft pong 1.0</p>
-    <p class="footer-text">Copyright Marcel Horvath. Do
-        not distribute!</p>
-</div>
-<script src="js/menu.js" type="text/javascript"></script>
-<!--<script type="text/javascript" src="js/three.min.js"></script>-->
-<!--<script type="text/javascript" src="js/TrackballControls.js"></script>-->
-<!--<script type="text/javascript" src="js/stats.min.js"></script>-->
-<!--<script type="text/javascript" src="js/app.js"></script>-->
+<!--<button class="btn-minecraft" id="back" style="display: none">Back</button>-->
+
+<!--<script src="js/menu.js" type="module"></script>-->
+<script src="https://cdn.jsdelivr.net/npm/three@0.126.1/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.126.1/examples/js/loaders/GLTFLoader.js"></script>
+<script type="module" src="js/app.js"></script>
 </body>
 </html>
