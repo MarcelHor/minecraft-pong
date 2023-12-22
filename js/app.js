@@ -25,10 +25,58 @@ let paddle1, paddle2, ball;
 let ballSpeedX = 0.02, ballSpeedY = 0.02;
 const paddleSpeed = 1;
 
+let score1 = 0, score2 = 0;
+const maxScore = 5;
+
 window.onload = function () {
     init();
     animate();
 }
+
+function updateScore(player) {
+    if (player === 1) {
+        score1++;
+    } else {
+        score2++;
+    }
+
+    document.getElementById('score1').textContent = score1.toString();
+    document.getElementById('score2').textContent = score2.toString();
+
+    if (score1 === maxScore || score2 === maxScore) {
+        endGame();
+    } else {
+        reset();
+    }
+}
+
+function endGame() {
+    document.getElementById('game-over').style.opacity = '1';
+
+    ballSpeedX = 0;
+    ballSpeedY = 0;
+
+    setTimeout(function () {
+        document.getElementById('game-over').style.opacity = '0';
+        score1 = 0;
+        score2 = 0;
+        document.getElementById('score1').textContent = score1.toString();
+        document.getElementById('score2').textContent = score2.toString();
+        reset();
+    }, 3000);
+
+}
+
+
+function reset() {
+    ball.position.set(0, 0, 1.1);
+    ballSpeedX = 0.02;
+    ballSpeedY = 0.02;
+
+    paddle1.position.set(-3.8, 0.25, 1.1);
+    paddle2.position.set(3.8, 0.25, 1.1);
+}
+
 
 function createPaddle(x, y, z) {
     const paddleGeometry = new THREE.BoxGeometry(0.4, 1, 0.3);
@@ -182,22 +230,19 @@ function onWindowResize() {
 
 
 const paddleBounds = {
-    minX: -4,
-    maxX: 4,
-    minY: -1.5,
-    maxY: 1.5
+    minX: -4, maxX: 4, minY: -1.5, maxY: 1.5
 };
 
 const ballBounds = {
-    minX: -4,
-    maxX: 4,
-    minY: -1.8,
-    maxY: 1.8
+    minX: -4, maxX: 4, minY: -1.8, maxY: 1.8
 }
 
 export function animate() {
     requestAnimationFrame(animate);
 
+    if (ballSpeedX === 0 && ballSpeedY === 0) {
+        return;
+    }
     ball.position.x += ballSpeedX;
     ball.position.y += ballSpeedY;
 
@@ -216,15 +261,19 @@ export function animate() {
     }
 
     // Kolize s pádkou 1
-    if (ball.position.x < paddle1.position.x + 0.2 && ball.position.x > paddle1.position.x - 0.2 &&
-        ball.position.y < paddle1.position.y + 0.5 && ball.position.y > paddle1.position.y - 0.5) {
+    if (ball.position.x < paddle1.position.x + 0.2 && ball.position.x > paddle1.position.x - 0.2 && ball.position.y < paddle1.position.y + 0.5 && ball.position.y > paddle1.position.y - 0.5) {
         ballSpeedX *= -1;
     }
 
     // Kolize s pádkou 2
-    if (ball.position.x < paddle2.position.x + 0.2 && ball.position.x > paddle2.position.x - 0.2 &&
-        ball.position.y < paddle2.position.y + 0.5 && ball.position.y > paddle2.position.y - 0.5) {
+    if (ball.position.x < paddle2.position.x + 0.2 && ball.position.x > paddle2.position.x - 0.2 && ball.position.y < paddle2.position.y + 0.5 && ball.position.y > paddle2.position.y - 0.5) {
         ballSpeedX *= -1;
+    }
+
+    if (ball.position.x < ballBounds.minX) {
+        updateScore(2);
+    } else if (ball.position.x > ballBounds.maxX) {
+        updateScore(1);
     }
 
     renderer.shadowMap.enabled = true;
