@@ -23,6 +23,7 @@ const woolMaterial = new THREE.MeshStandardMaterial({map: woolTexture});
 let camera, scene, renderer;
 let paddle1, paddle2, ball;
 let ballSpeedX = 0.02, ballSpeedY = 0.02;
+const ballAcceleration = 1.05;
 
 const paddleSpeed = 0.05;
 let paddle1Direction = 0, paddle2Direction = 0;
@@ -31,12 +32,8 @@ let paddle1Speed = 0, paddle2Speed = 0;
 let score1 = 0, score2 = 0;
 const maxScore = 5;
 
-let isPaddle1MovingUp = false;
-let isPaddle1MovingDown = false;
-let isPaddle2MovingUp = false;
-let isPaddle2MovingDown = false;
-
 window.onload = function () {
+
     init();
     animate();
 }
@@ -59,13 +56,13 @@ function updateScore(player) {
 }
 
 function endGame() {
-    document.getElementById('game-over').style.opacity = '1';
+    document.getElementById('game-over').style.display = 'flex';
 
     ballSpeedX = 0;
     ballSpeedY = 0;
 
     setTimeout(function () {
-        document.getElementById('game-over').style.opacity = '0';
+        document.getElementById('game-over').style.display = 'none';
         score1 = 0;
         score2 = 0;
         document.getElementById('score1').textContent = score1.toString();
@@ -78,8 +75,8 @@ function endGame() {
 
 function reset() {
     ball.position.set(0, 0, 1.1);
-    ballSpeedX = 0.02;
-    ballSpeedY = 0.02;
+    ballSpeedX = Math.random() > 0.5 ? 0.02 : -0.02;
+    ballSpeedY = Math.random() > 0.5 ? 0.02 : -0.02;
 
     paddle1.position.set(-3.8, 0.25, 1.1);
     paddle2.position.set(3.8, 0.25, 1.1);
@@ -173,6 +170,7 @@ function createStonePlatform() {
 
 
 export function init() {
+    document.querySelector('.score-container').style.display = 'flex';
     camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
     camera.position.set(0, -5, 5);
     camera.rotation.x = 0.8
@@ -239,6 +237,21 @@ function onWindowResize() {
     renderer.setSize(window.innerWidth, window.innerHeight);
 }
 
+function bounceBall() {
+    let paddle1Bounds = new THREE.Box3().setFromObject(paddle1);
+    let paddle2Bounds = new THREE.Box3().setFromObject(paddle2);
+    let ballBounds = new THREE.Box3().setFromObject(ball);
+
+    if (paddle1Bounds.intersectsBox(ballBounds)) {
+        ballSpeedX *= -1 * ballAcceleration;
+        ballSpeedY += paddle1Speed * 0.1;
+    }
+    if (paddle2Bounds.intersectsBox(ballBounds)) {
+        ballSpeedX *= -1 * ballAcceleration;
+        ballSpeedY += paddle2Speed * 0.1;
+    }
+}
+
 
 const paddleBounds = {
     minX: -4, maxX: 4, minY: -1.5, maxY: 1.5
@@ -250,7 +263,7 @@ const ballBounds = {
 
 export function animate() {
     requestAnimationFrame(animate);
-
+    //if end game, don't animate
     if (ballSpeedX === 0 && ballSpeedY === 0) {
         return;
     }
@@ -261,7 +274,6 @@ export function animate() {
         paddle1Speed *= 0.95;
         if (Math.abs(paddle1Speed) < 0.01) paddle1Speed = 0;
     }
-
     if (paddle2Direction !== 0) {
         paddle2Speed = Math.max(-paddleSpeed, Math.min(paddleSpeed, paddle2Speed + paddle2Direction * 0.1));
     } else {
@@ -269,36 +281,24 @@ export function animate() {
         if (Math.abs(paddle2Speed) < 0.01) paddle2Speed = 0;
     }
 
+    //move paddles and limit their movement
     paddle1.position.y += paddle1Speed
     paddle2.position.y += paddle2Speed
+    paddle1.position.y = Math.max(paddleBounds.minY, Math.min(paddle1.position.y, paddleBounds.maxY));
+    paddle2.position.y = Math.max(paddleBounds.minY, Math.min(paddle2.position.y, paddleBounds.maxY));
+
 
     ball.position.x += ballSpeedX;
     ball.position.y += ballSpeedY;
-
-    paddle1.position.x = Math.max(paddleBounds.minX, Math.min(paddle1.position.x, paddleBounds.maxX));
-    paddle1.position.y = Math.max(paddleBounds.minY, Math.min(paddle1.position.y, paddleBounds.maxY));
-
-    paddle2.position.x = Math.max(paddleBounds.minX, Math.min(paddle2.position.x, paddleBounds.maxX));
-    paddle2.position.y = Math.max(paddleBounds.minY, Math.min(paddle2.position.y, paddleBounds.maxY));
-
+    bounceBall();
     if (ball.position.x < ballBounds.minX || ball.position.x > ballBounds.maxX) {
         ballSpeedX *= -1;
     }
-
     if (ball.position.y < ballBounds.minY || ball.position.y > ballBounds.maxY) {
         ballSpeedY *= -1;
     }
 
-    // Kolize s pádkou 1
-    if (ball.position.x < paddle1.position.x + 0.2 && ball.position.x > paddle1.position.x - 0.2 && ball.position.y < paddle1.position.y + 0.5 && ball.position.y > paddle1.position.y - 0.5) {
-        ballSpeedX *= -1;
-    }
-
-    // Kolize s pádkou 2
-    if (ball.position.x < paddle2.position.x + 0.2 && ball.position.x > paddle2.position.x - 0.2 && ball.position.y < paddle2.position.y + 0.5 && ball.position.y > paddle2.position.y - 0.5) {
-        ballSpeedX *= -1;
-    }
-
+    //score
     if (ball.position.x < ballBounds.minX) {
         updateScore(2);
     } else if (ball.position.x > ballBounds.maxX) {

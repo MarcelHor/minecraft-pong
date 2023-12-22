@@ -185,7 +185,7 @@ body {
 .score-container {
     position: absolute;
     bottom: 10px;
-    display: flex;
+    display: none;
     justify-content: space-between;
     align-items: center;
     width: 100%;
@@ -206,11 +206,9 @@ body {
     height: 100%;
     color: yellow;
     position: absolute;
-    display: flex;
+    display: none;
     justify-content: center;
     align-items: center;
-    z-index: 1000;
     margin: 0;
     padding: 0;
-    opacity: 0;
 }
