@@ -3,9 +3,10 @@ const grassTexture = textureLoader.load('../assets/textures/grass.jpg');
 const stoneTexture = textureLoader.load('../assets/textures/stone.png');
 const plankTexture = textureLoader.load('../assets/textures/plank.png');
 const iceTexture = textureLoader.load('../assets/textures/ice_block.png');
+const woolTexture = textureLoader.load('../assets/textures/wool.png');
 
 const loader = new THREE.GLTFLoader();
-[grassTexture, stoneTexture, plankTexture, iceTexture].forEach(texture => {
+[grassTexture, stoneTexture, plankTexture, iceTexture, woolTexture].forEach(texture => {
     texture.magFilter = THREE.NearestFilter;
     texture.minFilter = THREE.NearestFilter;
     texture.wrapS = THREE.RepeatWrapping;
@@ -13,15 +14,16 @@ const loader = new THREE.GLTFLoader();
 });
 grassTexture.repeat.set(100, 100);
 
-const floorMaterial = new THREE.MeshBasicMaterial({map: grassTexture});
-const stoneMaterial = new THREE.MeshBasicMaterial({map: stoneTexture});
-const paddleMaterial = new THREE.MeshBasicMaterial({map: plankTexture});
-const iceMaterial = new THREE.MeshBasicMaterial({map: iceTexture});
+const floorMaterial = new THREE.MeshStandardMaterial({map: grassTexture});
+const stoneMaterial = new THREE.MeshStandardMaterial({map: stoneTexture});
+const paddleMaterial = new THREE.MeshStandardMaterial({map: plankTexture});
+const iceMaterial = new THREE.MeshStandardMaterial({map: iceTexture});
+const woolMaterial = new THREE.MeshStandardMaterial({map: woolTexture});
 
 let camera, scene, renderer;
 let paddle1, paddle2, ball;
 let ballSpeedX = 0.02, ballSpeedY = 0.02;
-const paddleSpeed = 0.5;
+const paddleSpeed = 1;
 
 window.onload = function () {
     init();
@@ -29,30 +31,33 @@ window.onload = function () {
 }
 
 function createPaddle(x, y, z) {
-    const paddleGeometry = new THREE.BoxGeometry(0.4, 1, 0.2);
+    const paddleGeometry = new THREE.BoxGeometry(0.4, 1, 0.3);
     const paddle = new THREE.Mesh(paddleGeometry, paddleMaterial);
     paddle.position.set(x, y, z);
+    paddle.castShadow = true;
     return paddle;
 }
 
 function createBall() {
     const ballGeometry = new THREE.BoxGeometry(0.3, 0.3, 0.3);
-    const ballMaterial = new THREE.MeshBasicMaterial({color: 0x00ff00});
-    const ball = new THREE.Mesh(ballGeometry, ballMaterial);
-    ball.position.set(0, 0, 1);
+    const ball = new THREE.Mesh(ballGeometry, woolMaterial);
+    ball.castShadow = true;
+    ball.position.set(0, 0, 1.1);
     return ball;
 }
 
 function createLight() {
-    const light = new THREE.PointLight(0xffffff, 1, 100);
-    light.position.set(0, 0, 5);
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
+    const light = new THREE.PointLight(0xffffff, 0.5);
     light.castShadow = true;
-    return light;
+    light.position.set(-4, -4, 4);
+    return [ambientLight, light];
 }
 
 function createFloor() {
     const floorGeometry = new THREE.PlaneGeometry(100, 100);
     const floor = new THREE.Mesh(floorGeometry, floorMaterial);
+    floor.receiveShadow = true;
     return floor;
 }
 
@@ -68,6 +73,7 @@ function addFence(group, index, vertical = false) {
         plot.fixScale = true;
         plot.scale.set(0.5, 0.5, 0.5);
         plot.rotation.x = Math.PI / 2;
+        plot.castShadow = true;
 
         if (vertical) {
             plot.position.set(0, index, 1);
@@ -96,6 +102,8 @@ function createStonePlatform() {
             block.position.x = x - blocksWide / 2 + 0.5;
             block.position.y = 0;
             block.position.z = z - blocksDeep / 2 + 0.5;
+            block.receiveShadow = true;
+            block.castShadow = true;
             platformGroup.add(block);
         }
     }
@@ -103,14 +111,15 @@ function createStonePlatform() {
     platformGroup.position.y = 0.5 - blockHeight / 2;
     platformGroup.position.z = 0.5;
     platformGroup.rotation.x = Math.PI / 2;
+    platformGroup.receiveShadow = true;
     return platformGroup;
 }
 
 
 export function init() {
-    camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.1, 1000);
-    camera.position.set(0, -3, 5);
-    camera.rotation.x = 0.5;
+    camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera.position.set(0, -5, 5);
+    camera.rotation.x = 0.8
     scene = new THREE.Scene();
     renderer = new THREE.WebGLRenderer();
     renderer.setSize(window.innerWidth, window.innerHeight);
@@ -119,7 +128,7 @@ export function init() {
     paddle1 = createPaddle(-3.8, 0.25, 1.1);
     paddle2 = createPaddle(3.8, 0.25, 1.1);
     ball = createBall();
-    const light = createLight();
+    const [ambientLight, light] = createLight();
     const floor = createFloor();
     const stonePlatform = createStonePlatform();
 
@@ -144,7 +153,7 @@ export function init() {
     group3.position.set(-4.5, -1.5, 0);
     group4.position.set(4.5, -1.5, 0);
 
-    scene.add(paddle1, paddle2, ball, light, floor, stonePlatform, group1, group2, group3, group4);
+    scene.add(paddle1, paddle2, ball, light, ambientLight, floor, stonePlatform, group1, group2, group3, group4);
 
     document.addEventListener('keydown', function (event) {
         switch (event.keyCode) {
@@ -218,5 +227,7 @@ export function animate() {
         ballSpeedX *= -1;
     }
 
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     renderer.render(scene, camera);
 }
