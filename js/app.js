@@ -32,8 +32,22 @@ let paddle1Speed = 0, paddle2Speed = 0;
 let score1 = 0, score2 = 0;
 const maxScore = 5;
 
-window.onload = function () {
+let isPlayingAgainstAI = true;
 
+
+window.onload = function () {
+    init();
+    animate();
+}
+
+export function play1v1() {
+    isPlayingAgainstAI = false;
+    init();
+    animate();
+}
+
+export function playAgainstAI() {
+    isPlayingAgainstAI = true;
     init();
     animate();
 }
@@ -51,12 +65,15 @@ function updateScore(player) {
     if (score1 === maxScore || score2 === maxScore) {
         endGame();
     } else {
+        document.getElementById('scoreSound').play();
         reset();
     }
 }
 
 function endGame() {
     document.getElementById('game-over').style.display = 'flex';
+    document.getElementById('gameMusic').pause();
+    document.getElementById('gameOverSound').play();
 
     ballSpeedX = 0;
     ballSpeedY = 0;
@@ -68,7 +85,7 @@ function endGame() {
         document.getElementById('score1').textContent = score1.toString();
         document.getElementById('score2').textContent = score2.toString();
         reset();
-    }, 3000);
+    }, 6000);
 
 }
 
@@ -169,7 +186,9 @@ function createStonePlatform() {
 }
 
 
-export function init() {
+function init() {
+    document.getElementById('hitSound').volume = 0.4;
+    document.getElementById('gameMusic').play();
     document.querySelector('.score-container').style.display = 'flex';
     camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
     camera.position.set(0, -5, 5);
@@ -214,9 +233,9 @@ export function init() {
             paddle1Direction = 1;
         } else if (event.keyCode === 83) { // S key
             paddle1Direction = -1;
-        } else if (event.keyCode === 38) { // Up arrow
+        } else if (event.keyCode === 38 && !isPlayingAgainstAI) { // Up arrow
             paddle2Direction = 1;
-        } else if (event.keyCode === 40) { // Down arrow
+        } else if (event.keyCode === 40 && !isPlayingAgainstAI) { // Down arrow
             paddle2Direction = -1;
         }
     });
@@ -224,7 +243,7 @@ export function init() {
     document.addEventListener('keyup', function (event) {
         if ((event.keyCode === 87 && paddle1Direction === 1) || (event.keyCode === 83 && paddle1Direction === -1)) {
             paddle1Direction = 0;
-        } else if ((event.keyCode === 38 && paddle2Direction === 1) || (event.keyCode === 40 && paddle2Direction === -1)) {
+        } else if ((event.keyCode === 38 && paddle2Direction === 1) || (event.keyCode === 40 && paddle2Direction === -1 && !isPlayingAgainstAI)) {
             paddle2Direction = 0;
         }
     });
@@ -243,10 +262,12 @@ function bounceBall() {
     let ballBounds = new THREE.Box3().setFromObject(ball);
 
     if (paddle1Bounds.intersectsBox(ballBounds)) {
+        document.getElementById('hitSound').play();
         ballSpeedX *= -1 * ballAcceleration;
         ballSpeedY += paddle1Speed * 0.1;
     }
     if (paddle2Bounds.intersectsBox(ballBounds)) {
+        document.getElementById('hitSound').play();
         ballSpeedX *= -1 * ballAcceleration;
         ballSpeedY += paddle2Speed * 0.1;
     }
@@ -261,7 +282,27 @@ const ballBounds = {
     minX: -4, maxX: 4, minY: -1.8, maxY: 1.8
 }
 
-export function animate() {
+
+let aiReactionDelay = 20;
+let lastAiMoveTime = Date.now();
+let aiErrorMargin = 0.5;
+
+function aiMovement() {
+    if (!isPlayingAgainstAI || Date.now() - lastAiMoveTime < aiReactionDelay) return;
+
+    lastAiMoveTime = Date.now();
+
+    let aiTargetY = ball.position.y + (Math.random() - 0.5) * 2 * aiErrorMargin;
+
+    if (Math.abs(aiTargetY - paddle2.position.y) > 0.5) {
+        paddle2Speed = aiTargetY > paddle2.position.y ? paddleSpeed : -paddleSpeed;
+    } else {
+        paddle2Speed = 0;
+    }
+}
+
+
+function animate() {
     requestAnimationFrame(animate);
     //if end game, don't animate
     if (ballSpeedX === 0 && ballSpeedY === 0) {
@@ -297,6 +338,8 @@ export function animate() {
     if (ball.position.y < ballBounds.minY || ball.position.y > ballBounds.maxY) {
         ballSpeedY *= -1;
     }
+
+    aiMovement();
 
     //score
     if (ball.position.x < ballBounds.minX) {
