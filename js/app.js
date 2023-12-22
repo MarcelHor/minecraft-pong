@@ -23,10 +23,18 @@ const woolMaterial = new THREE.MeshStandardMaterial({map: woolTexture});
 let camera, scene, renderer;
 let paddle1, paddle2, ball;
 let ballSpeedX = 0.02, ballSpeedY = 0.02;
-const paddleSpeed = 1;
+
+const paddleSpeed = 0.05;
+let paddle1Direction = 0, paddle2Direction = 0;
+let paddle1Speed = 0, paddle2Speed = 0;
 
 let score1 = 0, score2 = 0;
 const maxScore = 5;
+
+let isPaddle1MovingUp = false;
+let isPaddle1MovingDown = false;
+let isPaddle2MovingUp = false;
+let isPaddle2MovingDown = false;
 
 window.onload = function () {
     init();
@@ -122,7 +130,7 @@ function addFence(group, index, vertical = false) {
         plot.scale.set(0.5, 0.5, 0.5);
         plot.rotation.x = Math.PI / 2;
         plot.castShadow = true;
-
+        plot.receiveShadow = true;
         if (vertical) {
             plot.position.set(0, index, 1);
             plot.rotation.y = Math.PI / 2;
@@ -204,19 +212,22 @@ export function init() {
     scene.add(paddle1, paddle2, ball, light, ambientLight, floor, stonePlatform, group1, group2, group3, group4);
 
     document.addEventListener('keydown', function (event) {
-        switch (event.keyCode) {
-            case 87: // W klávesa - pohyb první pádky nahoru
-                paddle1.position.y += paddleSpeed;
-                break;
-            case 83: // S klávesa - pohyb první pádky dolů
-                paddle1.position.y -= paddleSpeed;
-                break;
-            case 38: // Šipka nahoru - pohyb druhé pádky nahoru
-                paddle2.position.y += paddleSpeed;
-                break;
-            case 40: // Šipka dolů - pohyb druhé pádky dolů
-                paddle2.position.y -= paddleSpeed;
-                break;
+        if (event.keyCode === 87) { // W key
+            paddle1Direction = 1;
+        } else if (event.keyCode === 83) { // S key
+            paddle1Direction = -1;
+        } else if (event.keyCode === 38) { // Up arrow
+            paddle2Direction = 1;
+        } else if (event.keyCode === 40) { // Down arrow
+            paddle2Direction = -1;
+        }
+    });
+
+    document.addEventListener('keyup', function (event) {
+        if ((event.keyCode === 87 && paddle1Direction === 1) || (event.keyCode === 83 && paddle1Direction === -1)) {
+            paddle1Direction = 0;
+        } else if ((event.keyCode === 38 && paddle2Direction === 1) || (event.keyCode === 40 && paddle2Direction === -1)) {
+            paddle2Direction = 0;
         }
     });
     window.addEventListener('resize', onWindowResize, false);
@@ -243,6 +254,24 @@ export function animate() {
     if (ballSpeedX === 0 && ballSpeedY === 0) {
         return;
     }
+
+    if (paddle1Direction !== 0) {
+        paddle1Speed = Math.max(-paddleSpeed, Math.min(paddleSpeed, paddle1Speed + paddle1Direction * 0.1));
+    } else {
+        paddle1Speed *= 0.95;
+        if (Math.abs(paddle1Speed) < 0.01) paddle1Speed = 0;
+    }
+
+    if (paddle2Direction !== 0) {
+        paddle2Speed = Math.max(-paddleSpeed, Math.min(paddleSpeed, paddle2Speed + paddle2Direction * 0.1));
+    } else {
+        paddle2Speed *= 0.95;
+        if (Math.abs(paddle2Speed) < 0.01) paddle2Speed = 0;
+    }
+
+    paddle1.position.y += paddle1Speed
+    paddle2.position.y += paddle2Speed
+
     ball.position.x += ballSpeedX;
     ball.position.y += ballSpeedY;
 
