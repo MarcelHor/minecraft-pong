@@ -6,51 +6,63 @@
 </head>
 <body>
 
-<!--<audio id="backgroundMusic" src="/assets/sounds/menu-music.mp3" loop></audio>-->
-<!--<audio id="buttonSound" src="/assets/sounds/minecraft_click.mp3"></audio>-->
+<audio id="backgroundMusic" src="/assets/sounds/menu-music.mp3" loop></audio>
+<audio id="buttonSound" src="/assets/sounds/minecraft_click.mp3"></audio>
 <audio id="gameOverSound" src="/assets/sounds/victory.mp3"></audio>
 <audio id="scoreSound" src="/assets/sounds/villager.mp3"></audio>
 <audio id="hitSound" src="/assets/sounds/woodSound.mp3"></audio>
 <audio id="gameMusic" src="/assets/sounds/music.mp3" loop></audio>
-<!--<div id="mojangScreen" class="mojang-screen">-->
-<!--    <img src="./assets/images/Mojang-logo.png" alt="Mojang Logo"/>-->
-<!--    <div class="loading-bar">-->
-<!--        <div class="loading-progress"></div>-->
-<!--    </div>-->
-<!--    <button id="startButton" class="start-game-button" style="display:none;">Start Game</button>-->
-<!--</div>-->
+<div id="mojangScreen" class="mojang-screen">
+    <img src="./assets/images/Mojang-logo.png" alt="Mojang Logo"/>
+    <div class="loading-bar">
+        <div class="loading-progress"></div>
+    </div>
+    <button id="startButton" class="start-game-button" style="display:none;">Start Game</button>
+</div>
 
-<!--<div class="menu-container">-->
-<!--    <div class="menu-main">-->
-<!--        <div class="title-container">-->
-<!--            <h1 class="title">Minecraft<span id="splash">Enjoy the game!</span></h1>-->
-<!--            <h2 class="subtitle">Pong Edition</h2>-->
-<!--        </div>-->
-<!--        <div class="menu-buttons">-->
-<!--            <button class="btn-minecraft" id="play">Singeplayer</button>-->
-<!--            <button class="btn-minecraft">Local multiplayer</button>-->
-<!--        </div>-->
-<!--        <div class="menu-options">-->
-<!--            <button class="btn-minecraft">Options</button>-->
-<!--            <button class="btn-minecraft" id="quit">Quit</button>-->
-<!--        </div>-->
-<!--    </div>-->
-
-<!--    <div class="menu-footer">-->
-<!--        <p class="footer-text">Minecraft pong 1.0</p>-->
-<!--        <p class="footer-text">Copyright Marcel Horvath. Do-->
-<!--            not distribute!</p>-->
-<!--    </div>-->
-<!--</div>-->
-<!--<button class="btn-minecraft" id="back" style="display: none">Back</button>-->
+<div class="menu-container">
+    <div class="menu-main">
+        <div class="title-container">
+            <h1 class="title">Minecraft<span id="splash">Enjoy the game!</span></h1>
+            <h2 class="subtitle">Pong Edition</h2>
+        </div>
+        <div class="menu-buttons-container">
+            <div class="menu-buttons">
+                <button class="btn-minecraft" id="single">Singleplayer</button>
+                <button class="btn-minecraft" id="multi">Multiplayer</button>
+            </div>
+            <div class="menu-options">
+                <button class="btn-minecraft" id="options">Options</button>
+                <button class="btn-minecraft" id="quit">Quit</button>
+            </div>
+        </div>
+        <div class="menu-options-container">
+            <span class="difficulty-text">Difficulty</span>
+            <div class="difficulty-buttons">
+                <button class="btn-minecraft" id="easy">Easy</button>
+                <button class="btn-minecraft" id="medium">Medium</button>
+                <button class="btn-minecraft" id="hard">Hard</button>
+            </div>
+            <button class="btn-minecraft" id="closeOptions">Back</button>
+        </div>
+    </div>
+    <div class="menu-footer">
+        <p class="footer-text">Minecraft pong 1.0</p>
+        <p class="footer-text">Copyright Marcel Horvath. Do
+            not distribute!</p>
+    </div>
+</div>
+<button class="btn-minecraft" id="back" style="display: none">Back</button>
 <span id="game-over">Game Over</span>
 <div class="score-container">
-        <p id="score1">0</p>
-        <p id="score2">0</p>
+    <p id="score1">0</p>
+    <p id="score2">0</p>
 </div>
-<!--<script src="js/menu.js" type="module"></script>-->
+<script src="js/menu.js" type="module"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.126.1/build/three.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.126.1/examples/js/loaders/GLTFLoader.js"></script>
+<script type="module" src="js/game.js"></script>
+<script type="module" src="js/prefabs.js"></script>
 <script type="module" src="js/app.js"></script>
 </body>
 </html>

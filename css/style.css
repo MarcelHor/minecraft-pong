@@ -4,6 +4,8 @@
 
 body {
     background-image: url('../assets/images/backgroundmenu.png');
+    background-repeat: no-repeat;
+    background-position: center;
     background-size: cover;
     overflow: hidden;
     margin: 0;
@@ -70,6 +72,14 @@ body {
     50% {
         transform: rotate(-10deg) scale(1.2);
     }
+}
+
+.menu-buttons-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
 }
 
 .menu-buttons {
@@ -212,3 +222,29 @@ body {
     margin: 0;
     padding: 0;
 }
+
+.menu-options-container {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 33.3%;
+    margin-top: 1rem;
+    margin-bottom: 1.25rem;
+}
+
+.difficulty-text {
+    font-size: 1.2rem;
+    color: rgb(247, 247, 247);
+    text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.8);
+    margin-bottom: 1rem;
+}
+
+.difficulty-buttons {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    gap: 10px;
+}
+
