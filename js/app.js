@@ -1,9 +1,12 @@
 import {onWindowResize, aiMovement, bounceBall} from './game.js';
 import {
-    createPaddle, createBall, createLight, createFloor, createFenceGroup, addFence, createStonePlatform
+    createPaddle, createBall, createLight, createFloor, createFenceGroup, addFence, createStonePlatform, createSteve
 } from './prefabs.js';
 
 let camera, scene, renderer, animateRequestId;
+const clock = new THREE.Clock();
+const mixers = [];
+
 let paddle1, paddle2, ball;
 
 let ballSpeedX = 0.02, ballSpeedY = 0.02;
@@ -28,11 +31,11 @@ const paddleBounds = {
 const ballBounds = {
     minX: -4, maxX: 4, minY: -1.8, maxY: 1.8
 }
-
-window.onload = function () {
-    init();
-    animate();
-}
+//
+// window.onload = function () {
+//     init();
+//     animate();
+// }
 
 function init() {
     camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -70,7 +73,12 @@ function init() {
     group3.position.set(-4.5, -1.5, 0);
     group4.position.set(4.5, -1.5, 0);
 
+    createSteve(scene, function (mixer) {
+        mixers.push(mixer);
+    });
+
     scene.add(paddle1, paddle2, ball, light, ambientLight, floor, stonePlatform, group1, group2, group3, group4);
+
 
     //paddle input direction
     document.addEventListener('keydown', function (keyboardEvent) {
@@ -157,6 +165,11 @@ function animate() {
         updateScore(2);
     } else if (ball.position.x > ballBounds.maxX) {
         updateScore(1);
+    }
+
+    const delta = clock.getDelta();
+    for (let i = 0; i < mixers.length; i++) {
+        mixers[i].update(delta);
     }
 
     renderer.shadowMap.enabled = true;

@@ -5,7 +5,6 @@ const plankTexture = textureLoader.load('../assets/textures/plank.png');
 const iceTexture = textureLoader.load('../assets/textures/ice_block.png');
 const woolTexture = textureLoader.load('../assets/textures/wool.png');
 
-const loader = new THREE.GLTFLoader();
 [grassTexture, stoneTexture, plankTexture, iceTexture, woolTexture].forEach(texture => {
     texture.magFilter = THREE.NearestFilter;
     texture.minFilter = THREE.NearestFilter;
@@ -52,11 +51,11 @@ function createFloor() {
 }
 
 function createFenceGroup() {
-    var group = new THREE.Group();
-    return group;
+    return new THREE.Group();
 }
 
 function addFence(group, index, vertical = false) {
+    const loader = new THREE.GLTFLoader();
     loader.load('../assets/models/minecraft_fence/scene.gltf', function (gltf) {
         var plot = gltf.scene;
         plot.fixScale = true;
@@ -104,4 +103,28 @@ function createStonePlatform() {
     return platformGroup;
 }
 
-export {createPaddle, createBall, createLight, createFloor, createFenceGroup, addFence, createStonePlatform};
+function createSteve(scene, onLoad) {
+    const loader = new THREE.GLTFLoader();
+    loader.load('../assets/models/cheering.glb', function (gltf) {
+        const model = gltf.scene;
+        model.position.set(0, 5, 0);
+        model.scale.set(0.25, 0.25, 0.25);
+        model.rotation.y = Math.PI;
+        model.rotation.x = Math.PI / 2;
+
+        scene.add(model);
+
+        const mixer = new THREE.AnimationMixer(model);
+        if (gltf.animations.length > 0) {
+            const action = mixer.clipAction(gltf.animations[0]);
+            action.play();
+        }
+
+        if (onLoad) onLoad(mixer);
+    }, undefined, function (error) {
+        console.error(error);
+    });
+}
+
+
+export {createPaddle, createBall, createLight, createFloor, createFenceGroup, addFence, createStonePlatform, createSteve};
