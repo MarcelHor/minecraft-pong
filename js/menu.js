@@ -1,4 +1,5 @@
 import {play1v1, playAgainstAI, stopReset, setDifficulty} from "./app.js";
+import {setGoldBlockEnabled} from "./app.js";
 
 const splashes = ['Better than the original.', 'Now with 100% more bugs!', 'Now with 100% less bugs!', 'Enjoy the game!', 'Play with your friends!', 'Can you find the secret?', 'Will I get good grade?', 'Hope you like it!', 'Made with love.', 'Hopefully, I won\'t get sued.', 'Made with JavaScript.', 'Made with Three.js'];
 
@@ -29,7 +30,7 @@ const hitSound = document.getElementById('hitSound');
 const gameMusic = document.getElementById('gameMusic');
 const buttonSound = document.getElementById('buttonSound');
 const backgroundMusic = document.getElementById('backgroundMusic');
-
+const goldBlockOption = document.getElementById('goldBlockOption');
 
 window.onload = function () {
     //Mojang Screen
@@ -118,6 +119,12 @@ window.onload = function () {
             handleSetDifficulty(hard, 'hard');
         });
     })
+
+    goldBlockOption.addEventListener('change', function () {
+        setGoldBlockEnabled(goldBlockOption.checked);
+    });
+    goldBlockOption.checked = false;
+
 
     handleSetDifficulty(medium, 'medium');
 }

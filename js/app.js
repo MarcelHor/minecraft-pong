@@ -8,18 +8,19 @@ import {
     addFence,
     createStonePlatform,
     createSteve,
+    createGoldBlock,
 } from './prefabs.js';
 
 let camera, scene, renderer, animateRequestId;
 const clock = new THREE.Clock();
 const mixers = [];
 
-let paddle1, paddle2, ball;
+let paddle1, paddle2, ball, goldBlock;
 
 let ballSpeedX = 0.02, ballSpeedY = 0.02;
 const ballAcceleration = 1.05;
 
-const paddleSpeed = 0.05;
+let paddleSpeed = 0.05;
 let paddle1Direction = 0, paddle2Direction = 0;
 let paddle1Speed = 0, paddle2Speed = 0;
 
@@ -31,6 +32,8 @@ let aiReactionDelay = 50;
 let aiErrorMargin = 0.3;
 let lastAiMoveTime = Date.now();
 
+let enableGoldBlock = false;
+
 const paddleBounds = {
     minX: -4, maxX: 4, minY: -1.5, maxY: 1.5
 };
@@ -38,11 +41,11 @@ const paddleBounds = {
 const ballBounds = {
     minX: -4, maxX: 4, minY: -1.8, maxY: 1.8
 }
-//
-window.onload = function () {
-    init();
-    animate();
-}
+
+// window.onload = function () {
+//     init();
+//     animate();
+// }
 
 async function init() {
     camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -84,7 +87,22 @@ async function init() {
         mixers.push(mixer);
     });
 
+    if (enableGoldBlock) {
+        setInterval(function () {
+            if (goldBlock) {
+                return;
+            }
+            goldBlock = createGoldBlock();
+            goldBlock.position.x = Math.random() * (ballBounds.maxX - ballBounds.minX) + ballBounds.minX;
+            goldBlock.position.y = Math.random() * (ballBounds.maxY - ballBounds.minY) + ballBounds.minY;
+            scene.add(goldBlock);
+        }, 1000);
+    } else {
+        console.log('Gold block disabled');
+    }
+
     scene.add(paddle1, paddle2, ball, light, ambientLight, floor, stonePlatform, group1, group2, group3, group4);
+
 
     //paddle input direction
     document.addEventListener('keydown', function (keyboardEvent) {
@@ -178,11 +196,54 @@ function animate() {
         mixers[i].update(delta);
     }
 
+    if (goldBlock && enableGoldBlock) {
+        goldBlock.rotation.z += 0.01;
+        if (goldBlock.position.z > 1.1) {
+            goldBlock.position.z -= 0.01;
+        }
+        //if collides with ball, remove gold block and activate random boost
+        if (ball.position.distanceTo(goldBlock.position) < 0.5) {
+            activateRandomBoost();
+            console.log('gold block collected');
+            scene.remove(goldBlock);
+            goldBlock = null;
+        }
+    }
+
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     renderer.render(scene, camera);
 }
 
+function activateRandomBoost() {
+    const boost = Math.floor(Math.random() * 3);
+    if (boost === 0) {
+        // Zvětšení pálky
+        console.log('Zvětšení pálky');
+        paddle1.scale.set(1, 2, 1);
+        paddle2.scale.set(1, 2, 1);
+        setTimeout(function () {
+            paddle1.scale.set(1, 1, 1);
+            paddle2.scale.set(1, 1, 1);
+        }, 5000);
+    } else if (boost === 1) {
+        console.log('Zrychlení míčku');
+        // Zrychlení míčku
+        ballSpeedX *= 1.5;
+        ballSpeedY *= 1.5;
+        setTimeout(function () {
+            ballSpeedX /= 1.5;
+            ballSpeedY /= 1.5;
+        }, 5000);
+    } else if (boost === 2) {
+        // Zpomalení pálky
+        console.log('Zpomalení pálky');
+        paddleSpeed /= 3;
+        setTimeout(function () {
+            paddleSpeed *= 3;
+        }, 5000);
+    }
+}
 
 function updateScore(player) {
     if (player === 1) {
@@ -228,6 +289,11 @@ function reset() {
 
     paddle1.position.set(-3.8, 0.25, 1.1);
     paddle2.position.set(3.8, 0.25, 1.1);
+
+    if (goldBlock) {
+        scene.remove(goldBlock);
+        goldBlock = null;
+    }
 }
 
 export async function play1v1() {
@@ -268,4 +334,8 @@ export function setDifficulty(difficulty) {
     } else {
         console.error('Invalid difficulty');
     }
+}
+
+export function setGoldBlockEnabled(value) {
+    enableGoldBlock = value;
 }

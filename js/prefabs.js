@@ -4,8 +4,9 @@ const stoneTexture = textureLoader.load('../assets/textures/stone.png');
 const plankTexture = textureLoader.load('../assets/textures/plank.png');
 const iceTexture = textureLoader.load('../assets/textures/ice_block.png');
 const woolTexture = textureLoader.load('../assets/textures/wool.png');
+const goldTexture = textureLoader.load('../assets/textures/gold_block.png');
 
-[grassTexture, stoneTexture, plankTexture, iceTexture, woolTexture].forEach(texture => {
+[grassTexture, stoneTexture, plankTexture, iceTexture, woolTexture, goldTexture].forEach(texture => {
     texture.magFilter = THREE.NearestFilter;
     texture.minFilter = THREE.NearestFilter;
     texture.wrapS = THREE.RepeatWrapping;
@@ -18,6 +19,7 @@ const stoneMaterial = new THREE.MeshStandardMaterial({map: stoneTexture});
 const paddleMaterial = new THREE.MeshStandardMaterial({map: plankTexture});
 const iceMaterial = new THREE.MeshStandardMaterial({map: iceTexture});
 const woolMaterial = new THREE.MeshStandardMaterial({map: woolTexture});
+const goldMaterial = new THREE.MeshStandardMaterial({map: goldTexture});
 
 function createPaddle(x, y, z) {
     const paddleGeometry = new THREE.BoxGeometry(0.4, 1, 0.3);
@@ -55,25 +57,31 @@ function createFenceGroup() {
 }
 
 async function addFence(group, index, vertical = false) {
-    const loader = new THREE.GLTFLoader();
-    await loader.load('../assets/models/minecraft_fence/scene.gltf', function (gltf) {
-        var plot = gltf.scene;
-        plot.fixScale = true;
-        plot.scale.set(0.5, 0.5, 0.5);
-        plot.rotation.x = Math.PI / 2;
-        plot.traverse((node) => {
-            if (node.isMesh) {
-                node.castShadow = true;
+    return new Promise((resolve, reject) => {
+        const loader = new THREE.GLTFLoader();
+        loader.load('../assets/models/minecraft_fence/scene.gltf', function (gltf) {
+            var plot = gltf.scene;
+            plot.fixScale = true;
+            plot.scale.set(0.5, 0.5, 0.5);
+            plot.rotation.x = Math.PI / 2;
+            plot.traverse((node) => {
+                if (node.isMesh) {
+                    node.castShadow = true;
+                }
+            });
+            if (vertical) {
+                plot.position.set(0, index, 1);
+                plot.rotation.y = Math.PI / 2;
+            } else {
+                plot.position.set(index, 0, 1);
             }
-        });
-        if (vertical) {
-            plot.position.set(0, index, 1);
-            plot.rotation.y = Math.PI / 2;
-        } else {
-            plot.position.set(index, 0, 1);
-        }
 
-        group.add(plot);
+            group.add(plot);
+            resolve(plot);
+        }, undefined, function (error) {
+            console.error(error);
+            reject(error);
+        });
     });
 }
 
@@ -137,13 +145,16 @@ function createSteve(scene, onLoad) {
     });
 }
 
+function createGoldBlock() {
+    const blockGeometry = new THREE.BoxGeometry(1, 1, 1);
+    const block = new THREE.Mesh(blockGeometry, goldMaterial);
+    block.position.set(0, 0, 3);
+    block.scale.set(0.2, 0.2, 0.2);
+    block.receiveShadow = true;
+    block.castShadow = true;
+    return block;
+}
+
 export {
-    createPaddle,
-    createBall,
-    createLight,
-    createFloor,
-    createFenceGroup,
-    addFence,
-    createStonePlatform,
-    createSteve,
+   createPaddle, createBall, createLight, createFloor, createFenceGroup, addFence, createStonePlatform, createSteve, createGoldBlock
 };

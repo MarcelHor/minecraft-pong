@@ -221,6 +221,7 @@ body {
     align-items: center;
     margin: 0;
     padding: 0;
+    z-index: 10;
 }
 
 .menu-options-container {
@@ -233,14 +234,14 @@ body {
     margin-bottom: 1.25rem;
 }
 
-.difficulty-text {
+.option-text {
     font-size: 1.2rem;
     color: rgb(247, 247, 247);
     text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.8);
     margin-bottom: 1rem;
 }
 
-.difficulty-buttons {
+.option {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -262,4 +263,13 @@ body {
     z-index: 10;
     margin: 0;
     padding: 0;
+}
+
+input[type="checkbox"] {
+    width: 32px;
+    height: 32px;
+}
+
+#goldBlockOption {
+    margin-bottom: 1rem;
 }
