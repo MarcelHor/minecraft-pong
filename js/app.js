@@ -32,7 +32,7 @@ let aiReactionDelay = 50;
 let aiErrorMargin = 0.3;
 let lastAiMoveTime = Date.now();
 
-let enableGoldBlock = false;
+let enableGoldBlock = true;
 
 const paddleBounds = {
     minX: -4, maxX: 4, minY: -1.5, maxY: 1.5
@@ -96,7 +96,7 @@ async function init() {
             goldBlock.position.x = Math.random() * (ballBounds.maxX - ballBounds.minX) + ballBounds.minX;
             goldBlock.position.y = Math.random() * (ballBounds.maxY - ballBounds.minY) + ballBounds.minY;
             scene.add(goldBlock);
-        }, 1000);
+        }, 10000);
     } else {
         console.log('Gold block disabled');
     }
@@ -203,6 +203,7 @@ function animate() {
         }
         //if collides with ball, remove gold block and activate random boost
         if (ball.position.distanceTo(goldBlock.position) < 0.5) {
+            document.getElementById('exp').play();
             activateRandomBoost();
             console.log('gold block collected');
             scene.remove(goldBlock);

@@ -123,7 +123,7 @@ window.onload = function () {
     goldBlockOption.addEventListener('change', function () {
         setGoldBlockEnabled(goldBlockOption.checked);
     });
-    goldBlockOption.checked = false;
+    goldBlockOption.checked = true;
 
 
     handleSetDifficulty(medium, 'medium');
