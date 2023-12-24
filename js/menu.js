@@ -23,6 +23,7 @@ const menuContainer = document.querySelector('.menu-container');
 const scoreContainer = document.querySelector('.score-container');
 const menuOptionsContainer = document.querySelector('.menu-options-container');
 const menuButtonsContainer = document.querySelector('.menu-buttons-container');
+const loading = document.getElementById('loading');
 
 const hitSound = document.getElementById('hitSound');
 const gameMusic = document.getElementById('gameMusic');
@@ -123,9 +124,11 @@ window.onload = function () {
 
 const hideMenu = function () {
     menuContainer.style.display = 'none';
+    backgroundMusic.currentTime = 0;
     backgroundMusic.pause();
     back.style.display = 'block';
     hitSound.volume = 0.4;
+    gameMusic.currentTime = 0;
     gameMusic.play();
     scoreContainer.style.display = 'flex';
 }
@@ -133,8 +136,10 @@ const hideMenu = function () {
 const showMenu = function () {
     stopReset();
     scoreContainer.style.display = 'none';
+    gameMusic.currentTime = 0;
     gameMusic.pause();
     menuContainer.style.display = 'flex';
+    gameMusic.currentTime = 0;
     backgroundMusic.play();
     back.style.display = 'none';
 }
@@ -160,12 +165,16 @@ const handleSetDifficulty = function (element, difficulty) {
 
 const startMultiplayer = async function () {
     hideMenu();
+    loading.style.display = 'flex';
     await play1v1();
+    loading.style.display = 'none';
 }
 
 const startSinglePlayer = async function () {
     hideMenu();
+    loading.style.display = 'flex';
     await playAgainstAI();
+    loading.style.display = 'none';
 }
 
 const buttonClick = function (sound, callback) {

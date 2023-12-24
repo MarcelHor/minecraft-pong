@@ -1,6 +1,13 @@
 import {onWindowResize, aiMovement, bounceBall} from './game.js';
 import {
-    createPaddle, createBall, createLight, createFloor, createFenceGroup, addFence, createStonePlatform, createSteve
+    createPaddle,
+    createBall,
+    createLight,
+    createFloor,
+    createFenceGroup,
+    addFence,
+    createStonePlatform,
+    createSteve,
 } from './prefabs.js';
 
 let camera, scene, renderer, animateRequestId;
@@ -32,10 +39,10 @@ const ballBounds = {
     minX: -4, maxX: 4, minY: -1.8, maxY: 1.8
 }
 //
-// window.onload = function () {
-//     init();
-//     animate();
-// }
+window.onload = function () {
+    init();
+    animate();
+}
 
 async function init() {
     camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -78,7 +85,6 @@ async function init() {
     });
 
     scene.add(paddle1, paddle2, ball, light, ambientLight, floor, stonePlatform, group1, group2, group3, group4);
-
 
     //paddle input direction
     document.addEventListener('keydown', function (keyboardEvent) {

@@ -39,7 +39,7 @@ function createLight() {
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
     const light = new THREE.PointLight(0xffffff, 0.5);
     light.castShadow = true;
-    light.position.set(-4, -4, 4);
+    light.position.set(-4, -4, 5);
     return [ambientLight, light];
 }
 
@@ -61,8 +61,11 @@ async function addFence(group, index, vertical = false) {
         plot.fixScale = true;
         plot.scale.set(0.5, 0.5, 0.5);
         plot.rotation.x = Math.PI / 2;
-        plot.castShadow = true;
-        plot.receiveShadow = true;
+        plot.traverse((node) => {
+            if (node.isMesh) {
+                node.castShadow = true;
+            }
+        });
         if (vertical) {
             plot.position.set(0, index, 1);
             plot.rotation.y = Math.PI / 2;
@@ -103,28 +106,44 @@ function createStonePlatform() {
     return platformGroup;
 }
 
-async function createSteve(scene, onLoad) {
-    const loader = new THREE.GLTFLoader();
-    await loader.load('../assets/models/cheering.glb', function (gltf) {
-        const model = gltf.scene;
-        model.position.set(0, 5, 0);
-        model.scale.set(0.25, 0.25, 0.25);
-        model.rotation.y = Math.PI;
-        model.rotation.x = Math.PI / 2;
+function createSteve(scene, onLoad) {
+    return new Promise((resolve, reject) => {
+        const loader = new THREE.GLTFLoader();
+        loader.load('../assets/models/cheering.glb', function (gltf) {
+            const model = gltf.scene;
+            model.position.set(0, 5, 0);
+            model.scale.set(0.25, 0.25, 0.25);
+            model.rotation.y = Math.PI;
+            model.rotation.x = Math.PI / 2;
+            model.traverse((node) => {
+                if (node.isMesh) {
+                    node.castShadow = true;
+                }
+            });
+            scene.add(model);
 
-        scene.add(model);
+            const mixer = new THREE.AnimationMixer(model);
+            if (gltf.animations.length > 0) {
+                const action = mixer.clipAction(gltf.animations[0]);
+                action.play();
+            }
 
-        const mixer = new THREE.AnimationMixer(model);
-        if (gltf.animations.length > 0) {
-            const action = mixer.clipAction(gltf.animations[0]);
-            action.play();
-        }
-
-        if (onLoad) onLoad(mixer);
-    }, undefined, function (error) {
-        console.error(error);
+            if (onLoad) onLoad(mixer);
+            resolve(model);
+        }, undefined, function (error) {
+            console.error(error);
+            reject(error);
+        });
     });
 }
 
-
-export {createPaddle, createBall, createLight, createFloor, createFenceGroup, addFence, createStonePlatform, createSteve};
+export {
+    createPaddle,
+    createBall,
+    createLight,
+    createFloor,
+    createFenceGroup,
+    addFence,
+    createStonePlatform,
+    createSteve,
+};
