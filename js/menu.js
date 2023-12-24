@@ -2,139 +2,185 @@ import {play1v1, playAgainstAI, stopReset, setDifficulty} from "./app.js";
 
 const splashes = ['Better than the original.', 'Now with 100% more bugs!', 'Now with 100% less bugs!', 'Enjoy the game!', 'Play with your friends!', 'Can you find the secret?', 'Will I get good grade?', 'Hope you like it!', 'Made with love.', 'Hopefully, I won\'t get sued.', 'Made with JavaScript.', 'Made with Three.js'];
 
+const easy = document.getElementById('easy');
+const medium = document.getElementById('medium');
+const hard = document.getElementById('hard');
+
+const quit = document.getElementById('quit');
+const multi = document.getElementById('multi');
+const single = document.getElementById('single');
+const options = document.getElementById('options');
+
+const closeOptionsButton = document.getElementById('closeOptions');
+const back = document.getElementById('back');
+const mojangScreen = document.getElementById('mojangScreen');
+const loadingProgress = document.querySelector('.loading-progress');
+const loadingBar = document.querySelector('.loading-bar');
+const buttons = document.querySelectorAll('.btn-minecraft')
+const startButton = document.getElementById('startButton');
+const splash = document.getElementById('splash')
+const menuContainer = document.querySelector('.menu-container');
+const scoreContainer = document.querySelector('.score-container');
+const menuOptionsContainer = document.querySelector('.menu-options-container');
+const menuButtonsContainer = document.querySelector('.menu-buttons-container');
+
+const hitSound = document.getElementById('hitSound');
+const gameMusic = document.getElementById('gameMusic');
+const buttonSound = document.getElementById('buttonSound');
+const backgroundMusic = document.getElementById('backgroundMusic');
+
+
 window.onload = function () {
     //Mojang Screen
-    document.querySelector('.loading-progress').style.width = '100%';
+    loadingProgress.style.width = '100%';
     setTimeout(function () {
-        document.querySelector('.loading-bar').style.display = 'none';
-        document.getElementById('startButton').style.display = 'block';
+        loadingBar.style.display = 'none';
+        startButton.style.display = 'block';
     }, 3000);
-    document.getElementById('startButton').addEventListener('click', function () {
-        const mojangScreen = document.getElementById('mojangScreen');
+    startButton.addEventListener('click', function () {
         mojangScreen.style.opacity = '0';
         setTimeout(function () {
             mojangScreen.style.display = 'none';
-            document.getElementById('backgroundMusic').play();
+            backgroundMusic.play();
         }, 1000);
     });
 
     //Menu
-    const button = document.querySelectorAll('.btn-minecraft')
-    button.forEach(btn => {
+    buttons.forEach(btn => {
         btn.addEventListener('mouseleave', function () {
             btn.blur()
         })
         btn.addEventListener('click', function () {
-            document.getElementById('buttonSound').play();
+            buttonSound.play();
         })
     })
 
-    const splash = document.getElementById('splash')
     splash.innerHTML = splashes[Math.floor(Math.random() * splashes.length)]
     setInterval(function () {
         splash.innerHTML = splashes[Math.floor(Math.random() * splashes.length)]
     }, 5000)
 
 
-    document.getElementById('quit').addEventListener('click', function () {
-        document.getElementById('buttonSound').play();
-        setTimeout(function () {
+    quit.addEventListener('click', function () {
+        buttonClick(buttonSound, function () {
             window.close();
-        }, 500);
+        });
     })
 
-    document.getElementById('multi').addEventListener('click', function () {
-        document.getElementById('buttonSound').play();
-        setTimeout(function () {
-            startMultiplayer();
-        }, 500);
+    multi.addEventListener('click', function () {
+        buttonClick(buttonSound, function () {
+            startMultiplayer().then(r => console.log("Starting multiplayer"));
+        });
     })
 
-    document.getElementById('single').addEventListener('click', function () {
-        document.getElementById('buttonSound').play();
-        setTimeout(function () {
-            startSinglePlayer();
-        }, 500);
+    single.addEventListener('click', function () {
+        buttonClick(buttonSound, function () {
+            startSinglePlayer().then(r => console.log("Starting single player"));
+        });
     })
 
-    document.getElementById('back').addEventListener('click', function () {
-        document.getElementById('buttonSound').play();
-        setTimeout(function () {
+    back.addEventListener('click', function () {
+        buttonClick(buttonSound, function () {
             showMenu();
-        }, 500);
+        });
     })
 
-    document.getElementById('options').addEventListener('click', function () {
-        document.getElementById('buttonSound').play();
-        setTimeout(function () {
+    //Options
+
+    options.addEventListener('click', function () {
+        buttonClick(buttonSound, function () {
             openOptions();
-        }, 500);
+        });
     })
 
-    document.getElementById('closeOptions').addEventListener('click', function () {
-        document.getElementById('buttonSound').play();
-        setTimeout(function () {
+    closeOptionsButton.addEventListener('click', function () {
+        buttonClick(buttonSound, function () {
             closeOptions();
-        }, 500);
+        });
     })
 
-    document.getElementById('easy').addEventListener('click', function () {
-        document.getElementById('buttonSound').play();
-        setTimeout(function () {
-            setDifficulty('easy');
-        }, 500);
+    easy.addEventListener('click', function () {
+        buttonClick(buttonSound, function () {
+            handleSetDifficulty(easy, 'easy');
+        });
     })
 
-    document.getElementById('medium').addEventListener('click', function () {
-        document.getElementById('buttonSound').play();
-        setTimeout(function () {
-            setDifficulty('medium');
-        }, 500);
+    medium.addEventListener('click', function () {
+        buttonClick(buttonSound, function () {
+            handleSetDifficulty(medium, 'medium');
+        });
     })
 
-    document.getElementById('hard').addEventListener('click', function () {
-        document.getElementById('buttonSound').play();
-        setTimeout(function () {
-            setDifficulty('hard');
-        }, 500);
+
+    hard.addEventListener('click', function () {
+        buttonClick(buttonSound, function () {
+            handleSetDifficulty(hard, 'hard');
+        });
     })
+
+    handleSetDifficulty(medium, 'medium');
 }
 
 const hideMenu = function () {
-    document.querySelector('.menu-container').style.display = 'none';
-    document.getElementById('backgroundMusic').pause();
-    document.getElementById('back').style.display = 'block';
-    document.getElementById('hitSound').volume = 0.4;
-    document.getElementById('gameMusic').play();
-    document.querySelector('.score-container').style.display = 'flex';
+    menuContainer.style.display = 'none';
+    backgroundMusic.pause();
+    back.style.display = 'block';
+    hitSound.volume = 0.4;
+    gameMusic.play();
+    scoreContainer.style.display = 'flex';
 }
 
 const showMenu = function () {
     stopReset();
-    document.querySelector('.score-container').style.display = 'none';
-    document.getElementById('gameMusic').pause();
-    document.querySelector('.menu-container').style.display = 'flex';
-    document.getElementById('backgroundMusic').play();
-    document.getElementById('back').style.display = 'none';
+    scoreContainer.style.display = 'none';
+    gameMusic.pause();
+    menuContainer.style.display = 'flex';
+    backgroundMusic.play();
+    back.style.display = 'none';
 }
 
 const openOptions = function () {
-    document.querySelector('.menu-options-container').style.display = 'flex';
-    document.querySelector('.menu-buttons-container').style.display = 'none';
+    menuOptionsContainer.style.display = 'flex';
+    menuButtonsContainer.style.display = 'none';
 }
 
 const closeOptions = function () {
-    document.querySelector('.menu-options-container').style.display = 'none';
-    document.querySelector('.menu-buttons-container').style.display = 'flex';
+    menuOptionsContainer.style.display = 'none';
+    menuButtonsContainer.style.display = 'flex';
 }
 
+const handleSetDifficulty = function (element, difficulty) {
+    easy.style.background = '#727272';
+    medium.style.background = '#727272';
+    hard.style.background = '#727272';
+    element.style.background = '#4d4d4d';
 
-const startMultiplayer = function () {
-    hideMenu();
-    play1v1();
+    setDifficulty(difficulty);
 }
 
-const startSinglePlayer = function () {
+const startMultiplayer = async function () {
     hideMenu();
-    playAgainstAI();
+    await play1v1();
+}
+
+const startSinglePlayer = async function () {
+    hideMenu();
+    await playAgainstAI();
+}
+
+const buttonClick = function (sound, callback) {
+    if (sound) {
+        sound.play();
+
+        sound.onended = function () {
+            sound.onended = null;
+            if (callback) {
+                callback();
+            }
+        }
+    } else {
+        if (callback) {
+            callback();
+        }
+    }
 }

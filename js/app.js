@@ -37,7 +37,7 @@ const ballBounds = {
 //     animate();
 // }
 
-function init() {
+async function init() {
     camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
     camera.position.set(0, -5, 5);
     camera.rotation.x = 0.8
@@ -59,13 +59,13 @@ function init() {
 
     const plotCount = 9;
     for (let i = 0; i < plotCount; i++) {
-        addFence(group1, i);
-        addFence(group2, i);
+        await addFence(group1, i);
+        await addFence(group2, i);
     }
 
     for (let i = 0; i < 4; i++) {
-        addFence(group3, i, true);
-        addFence(group4, i, true);
+        await addFence(group3, i, true);
+        await addFence(group4, i, true);
     }
 
     group1.position.set(-4, 2.5, 0);
@@ -73,7 +73,7 @@ function init() {
     group3.position.set(-4.5, -1.5, 0);
     group4.position.set(4.5, -1.5, 0);
 
-    createSteve(scene, function (mixer) {
+    await createSteve(scene, function (mixer) {
         mixers.push(mixer);
     });
 
@@ -224,14 +224,14 @@ function reset() {
     paddle2.position.set(3.8, 0.25, 1.1);
 }
 
-export function play1v1() {
+export async function play1v1() {
     isPlayingAgainstAI = false;
-    init();
+    await init();
 }
 
-export function playAgainstAI() {
+export async function playAgainstAI() {
     isPlayingAgainstAI = true;
-    init();
+    await init();
 }
 
 export function stopReset() {

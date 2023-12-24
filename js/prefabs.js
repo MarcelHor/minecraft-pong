@@ -54,9 +54,9 @@ function createFenceGroup() {
     return new THREE.Group();
 }
 
-function addFence(group, index, vertical = false) {
+async function addFence(group, index, vertical = false) {
     const loader = new THREE.GLTFLoader();
-    loader.load('../assets/models/minecraft_fence/scene.gltf', function (gltf) {
+    await loader.load('../assets/models/minecraft_fence/scene.gltf', function (gltf) {
         var plot = gltf.scene;
         plot.fixScale = true;
         plot.scale.set(0.5, 0.5, 0.5);
@@ -103,9 +103,9 @@ function createStonePlatform() {
     return platformGroup;
 }
 
-function createSteve(scene, onLoad) {
+async function createSteve(scene, onLoad) {
     const loader = new THREE.GLTFLoader();
-    loader.load('../assets/models/cheering.glb', function (gltf) {
+    await loader.load('../assets/models/cheering.glb', function (gltf) {
         const model = gltf.scene;
         model.position.set(0, 5, 0);
         model.scale.set(0.25, 0.25, 0.25);
