@@ -1,3 +1,4 @@
+//Textures
 const textureLoader = new THREE.TextureLoader();
 const grassTexture = textureLoader.load('../assets/textures/grass.jpg');
 const stoneTexture = textureLoader.load('../assets/textures/stone.png');
@@ -6,6 +7,7 @@ const iceTexture = textureLoader.load('../assets/textures/ice_block.png');
 const woolTexture = textureLoader.load('../assets/textures/wool.png');
 const goldTexture = textureLoader.load('../assets/textures/gold_block.png');
 
+// Set texture properties to avoid blurring - minecraft style
 [grassTexture, stoneTexture, plankTexture, iceTexture, woolTexture, goldTexture].forEach(texture => {
     texture.magFilter = THREE.NearestFilter;
     texture.minFilter = THREE.NearestFilter;
@@ -14,6 +16,7 @@ const goldTexture = textureLoader.load('../assets/textures/gold_block.png');
 });
 grassTexture.repeat.set(100, 100);
 
+// Materials
 const floorMaterial = new THREE.MeshStandardMaterial({map: grassTexture});
 const stoneMaterial = new THREE.MeshStandardMaterial({map: stoneTexture});
 const paddleMaterial = new THREE.MeshStandardMaterial({map: plankTexture});
@@ -56,6 +59,13 @@ function createFenceGroup() {
     return new THREE.Group();
 }
 
+/**
+ * Add a fence to the group at the given index. Loads the model from the assets folder using GLTFLoader.
+ * @param group
+ * @param index
+ * @param vertical
+ * @returns {Promise<unknown>}
+ */
 async function addFence(group, index, vertical = false) {
     return new Promise((resolve, reject) => {
         const loader = new THREE.GLTFLoader();
@@ -85,7 +95,10 @@ async function addFence(group, index, vertical = false) {
     });
 }
 
-
+/**
+ * Create a stone platform with ice in the middle. Creates each block individually with a loop and adds them to a group.
+ * @returns {*}
+ */
 function createStonePlatform() {
     const blocksWide = 10;
     const blocksDeep = 6;
@@ -114,6 +127,14 @@ function createStonePlatform() {
     return platformGroup;
 }
 
+/**
+ * Create steve and add it to the scene. Loads the model from the assets folder using GLTFLoader.
+ * Returns a promise that resolves with the model because of lag when loading the model.
+ * Animation is also added to the model.
+ * @param scene
+ * @param onLoad
+ * @returns {Promise<unknown>}
+ */
 function createSteve(scene, onLoad) {
     return new Promise((resolve, reject) => {
         const loader = new THREE.GLTFLoader();

@@ -11,10 +11,12 @@ import {
     createGoldBlock,
 } from './prefabs.js';
 
+//three.js variables
 let camera, scene, renderer, animateRequestId;
 const clock = new THREE.Clock();
 const mixers = [];
 
+//game variables
 let paddle1, paddle2, ball, goldBlock;
 
 let ballSpeedX = 0.02, ballSpeedY = 0.02;
@@ -154,7 +156,7 @@ function animate() {
         if (Math.abs(paddle2Speed) < 0.01) paddle2Speed = 0;
     }
 
-    //move paddles and limit their movement
+    //move paddles with speed and limit their movement
     paddle1.position.y += paddle1Speed
     paddle2.position.y += paddle2Speed
     paddle1.position.y = Math.max(paddleBounds.minY, Math.min(paddle1.position.y, paddleBounds.maxY));
@@ -166,7 +168,6 @@ function animate() {
         const aiResult = aiMovement(paddle2, ball, isPlayingAgainstAI, aiReactionDelay, aiErrorMargin, paddleSpeed);
         paddle2Speed = aiResult.paddle2Speed;
     }
-
 
     //move ball
     ball.position.x += ballSpeedX;
@@ -191,11 +192,13 @@ function animate() {
         updateScore(1);
     }
 
+    //animate steve
     const delta = clock.getDelta();
     for (let i = 0; i < mixers.length; i++) {
         mixers[i].update(delta);
     }
 
+    //gold block logic
     if (goldBlock && enableGoldBlock) {
         goldBlock.rotation.z += 0.01;
         if (goldBlock.position.z > 1.1) {
@@ -211,6 +214,7 @@ function animate() {
         }
     }
 
+    //render and shadows
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     renderer.render(scene, camera);
@@ -218,31 +222,35 @@ function animate() {
 
 function activateRandomBoost() {
     const boost = Math.floor(Math.random() * 3);
-    if (boost === 0) {
-        // Zvětšení pálky
-        console.log('Zvětšení pálky');
-        paddle1.scale.set(1, 2, 1);
-        paddle2.scale.set(1, 2, 1);
-        setTimeout(function () {
-            paddle1.scale.set(1, 1, 1);
-            paddle2.scale.set(1, 1, 1);
-        }, 5000);
-    } else if (boost === 1) {
-        console.log('Zrychlení míčku');
-        // Zrychlení míčku
-        ballSpeedX *= 1.5;
-        ballSpeedY *= 1.5;
-        setTimeout(function () {
-            ballSpeedX /= 1.5;
-            ballSpeedY /= 1.5;
-        }, 5000);
-    } else if (boost === 2) {
-        // Zpomalení pálky
-        console.log('Zpomalení pálky');
-        paddleSpeed /= 3;
-        setTimeout(function () {
-            paddleSpeed *= 3;
-        }, 5000);
+    switch (boost) {
+        case 0:
+            console.log('Zvětšení pálky');
+            paddle1.scale.set(1, 2, 1);
+            paddle2.scale.set(1, 2, 1);
+            setTimeout(function () {
+                paddle1.scale.set(1, 1, 1);
+                paddle2.scale.set(1, 1, 1);
+            }, 5000);
+            break;
+        case 1:
+            console.log('Zrychlení míčku');
+            ballSpeedX *= 1.5;
+            ballSpeedY *= 1.5;
+            setTimeout(function () {
+                ballSpeedX /= 1.5;
+                ballSpeedY /= 1.5;
+            }, 5000);
+            break;
+        case 2:
+            console.log('Zpomalení pálky');
+            paddleSpeed /= 3;
+            setTimeout(function () {
+                paddleSpeed *= 3;
+            }, 5000);
+            break;
+        default:
+            console.error('Invalid boost');
+
     }
 }
 

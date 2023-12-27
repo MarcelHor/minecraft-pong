@@ -88,7 +88,6 @@ window.onload = function () {
     })
 
     //Options
-
     options.addEventListener('click', function () {
         buttonClick(buttonSound, function () {
             openOptions();
@@ -170,6 +169,10 @@ const handleSetDifficulty = function (element, difficulty) {
     setDifficulty(difficulty);
 }
 
+/**
+ * Starts a multiplayer game vs another player
+ * @returns {Promise<void>}
+ */
 const startMultiplayer = async function () {
     hideMenu();
     loading.style.display = 'flex';
@@ -177,6 +180,10 @@ const startMultiplayer = async function () {
     loading.style.display = 'none';
 }
 
+/**
+ * Starts a single player game vs AI
+ * @returns {Promise<void>}
+ */
 const startSinglePlayer = async function () {
     hideMenu();
     loading.style.display = 'flex';
@@ -184,6 +191,11 @@ const startSinglePlayer = async function () {
     loading.style.display = 'none';
 }
 
+/**
+ * Plays a sound and calls the callback function when the sound ends
+ * @param sound
+ * @param callback
+ */
 const buttonClick = function (sound, callback) {
     if (sound) {
         sound.play();

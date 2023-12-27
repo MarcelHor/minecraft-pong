@@ -5,7 +5,7 @@
     <link href="https://fonts.cdnfonts.com/css/minecraftia" rel="stylesheet">
 </head>
 <body>
-
+<!--AUDIO-->
 <audio id="backgroundMusic" src="/assets/sounds/menu-music.mp3" loop></audio>
 <audio id="buttonSound" src="/assets/sounds/minecraft_click.mp3"></audio>
 <audio id="gameOverSound" src="/assets/sounds/victory.mp3"></audio>
@@ -14,6 +14,7 @@
 <audio id="gameMusic" src="/assets/sounds/music.mp3" loop></audio>
 <audio id="exp" src="/assets/sounds/exp.mp3"></audio>
 
+<!--MENU-->
 <div id="mojangScreen" class="mojang-screen">
     <img src="./assets/images/Mojang-logo.png" alt="Mojang Logo"/>
     <div class="loading-bar">
@@ -59,6 +60,7 @@
     </div>
 </div>
 
+<!--GAME-->
 <button class="btn-minecraft" id="back" style="display: none">Back</button>
 <span id="loading">Loading...</span>
 <span id="game-over">Game Over</span>
@@ -68,8 +70,8 @@
 </div>
 
 <script src="js/menu.js" type="module"></script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.126.1/build/three.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.126.1/examples/js/loaders/GLTFLoader.js"></script>
+<script src="js/three.min.js"></script>
+<script src="js/GLTFLoader.js"></script>
 <script type="module" src="js/game.js"></script>
 <script type="module" src="js/prefabs.js"></script>
 <script type="module" src="js/app.js"></script>
