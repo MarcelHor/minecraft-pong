@@ -19,10 +19,13 @@ const mixers = [];
 //game variables
 let paddle1, paddle2, ball, goldBlock;
 
-let ballSpeedX = 0.02, ballSpeedY = 0.02;
+const defaultBallSpeed = 0.02;
+let ballSpeedX = Math.random() > 0.5 ? defaultBallSpeed : -defaultBallSpeed;
+let ballSpeedY = Math.random() > 0.5 ? defaultBallSpeed : -defaultBallSpeed;
 const ballAcceleration = 1.05;
 
-let paddleSpeed = 0.05;
+const defaultPaddleSpeed = 0.05;
+let paddleSpeed = defaultPaddleSpeed;
 let paddle1Direction = 0, paddle2Direction = 0;
 let paddle1Speed = 0, paddle2Speed = 0;
 
@@ -35,6 +38,7 @@ let aiErrorMargin = 0.3;
 let lastAiMoveTime = Date.now();
 
 let enableGoldBlock = true;
+let isBoostActive = false;
 
 const paddleBounds = {
     minX: -4, maxX: 4, minY: -1.5, maxY: 1.5
@@ -57,6 +61,7 @@ async function init() {
     renderer = new THREE.WebGLRenderer();
     renderer.setSize(window.innerWidth, window.innerHeight);
     document.body.appendChild(renderer.domElement);
+
     paddle1 = createPaddle(-3.8, 0.25, 1.1);
     paddle2 = createPaddle(3.8, 0.25, 1.1);
     ball = createBall();
@@ -142,10 +147,11 @@ function animate() {
         return;
     }
 
-    //set paddle speed based on direction and limit their speed
+    //set paddle speed based on direction and limit it between -paddleSpeed and paddleSpeed (max speed)
     if (paddle1Direction !== 0) {
         paddle1Speed = Math.max(-paddleSpeed, Math.min(paddleSpeed, paddle1Speed + paddle1Direction * 0.1));
     } else {
+        //slow down paddle if no input - friction
         paddle1Speed *= 0.95;
         if (Math.abs(paddle1Speed) < 0.01) paddle1Speed = 0;
     }
@@ -156,7 +162,7 @@ function animate() {
         if (Math.abs(paddle2Speed) < 0.01) paddle2Speed = 0;
     }
 
-    //move paddles with speed and limit their movement
+    //move paddles with speed and limit them to bounds
     paddle1.position.y += paddle1Speed
     paddle2.position.y += paddle2Speed
     paddle1.position.y = Math.max(paddleBounds.minY, Math.min(paddle1.position.y, paddleBounds.maxY));
@@ -169,13 +175,13 @@ function animate() {
         paddle2Speed = aiResult.paddle2Speed;
     }
 
-    //move ball
-    ball.position.x += ballSpeedX;
-    ball.position.y += ballSpeedY;
-
     const bounceResult = bounceBall(paddle1, paddle2, ball, ballSpeedX, ballSpeedY, ballAcceleration, paddle1Speed, paddle2Speed);
     ballSpeedX = bounceResult.ballSpeedX;
     ballSpeedY = bounceResult.ballSpeedY
+
+    //move ball
+    ball.position.x += ballSpeedX;
+    ball.position.y += ballSpeedY;
 
     //limit ball movement
     if (ball.position.x < ballBounds.minX || ball.position.x > ballBounds.maxX) {
@@ -213,7 +219,6 @@ function animate() {
             goldBlock = null;
         }
     }
-
     //render and shadows
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
@@ -221,6 +226,10 @@ function animate() {
 }
 
 function activateRandomBoost() {
+    if (isBoostActive) {
+        return;
+    }
+    isBoostActive = true;
     const boost = Math.floor(Math.random() * 3);
     switch (boost) {
         case 0:
@@ -230,28 +239,32 @@ function activateRandomBoost() {
             setTimeout(function () {
                 paddle1.scale.set(1, 1, 1);
                 paddle2.scale.set(1, 1, 1);
+                isBoostActive = false;
             }, 5000);
             break;
         case 1:
             console.log('Zrychlení míčku');
-            ballSpeedX *= 1.5;
-            ballSpeedY *= 1.5;
+            ballSpeedX *= 2;
+            ballSpeedY *= 2;
             setTimeout(function () {
-                ballSpeedX /= 1.5;
-                ballSpeedY /= 1.5;
+                ballSpeedX = defaultBallSpeed;
+                ballSpeedY = defaultBallSpeed;
+                isBoostActive = false;
             }, 5000);
             break;
         case 2:
             console.log('Zpomalení pálky');
-            paddleSpeed /= 3;
+            paddleSpeed /= 2;
             setTimeout(function () {
-                paddleSpeed *= 3;
+                paddleSpeed = defaultPaddleSpeed;
+                isBoostActive = false;
             }, 5000);
             break;
         default:
             console.error('Invalid boost');
 
     }
+
 }
 
 function updateScore(player) {
@@ -293,11 +306,14 @@ function endGame() {
 
 function reset() {
     ball.position.set(0, 0, 1.1);
-    ballSpeedX = Math.random() > 0.5 ? 0.02 : -0.02;
-    ballSpeedY = Math.random() > 0.5 ? 0.02 : -0.02;
-
+    paddleSpeed = defaultPaddleSpeed;
+    ballSpeedX = Math.random() > 0.5 ? defaultBallSpeed : -defaultBallSpeed;
+    ballSpeedY = Math.random() > 0.5 ? defaultBallSpeed : -defaultBallSpeed;
     paddle1.position.set(-3.8, 0.25, 1.1);
     paddle2.position.set(3.8, 0.25, 1.1);
+    paddle1.scale.set(1, 1, 1);
+    paddle2.scale.set(1, 1, 1);
+    isBoostActive = false;
 
     if (goldBlock) {
         scene.remove(goldBlock);
@@ -319,6 +335,7 @@ export function stopReset() {
     reset();
     score1 = 0;
     score2 = 0;
+
     document.getElementById('score1').textContent = score1.toString();
     document.getElementById('score2').textContent = score2.toString();
     if (animateRequestId) {
